@@ -41,6 +41,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.ImeAction
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.annotation.VisibleForTesting
 import androidx.compose.material3.Icon
 import androidx.compose.ui.res.painterResource
 
@@ -71,7 +72,7 @@ fun TipTimeLayout() {
     val amount = amountInput.toDoubleOrNull() ?: 0.0
     val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
 
-    val tip = calculateTip(amount,tipPercent,roundUp)
+    val tip = calculateTip(amount, tipPercent, roundUp)
     Column(
         modifier = Modifier
             .statusBarsPadding()
@@ -115,7 +116,7 @@ fun TipTimeLayout() {
         )
         RoundupTheTipRow(
             roundUp = roundUp,
-            onRoundUpChanged = {roundUp = it},
+            onRoundUpChanged = { roundUp = it },
             modifier = Modifier.padding(bottom = 32.dp)
         )
         Text(
@@ -130,13 +131,13 @@ fun TipTimeLayout() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditNumberField(
-    @StringRes label:Int,
+    @StringRes label: Int,
     @DrawableRes leadingIcon: Int,
     value: String,
     onValueChange: (String) -> Unit,
-    keyboardOptions:KeyboardOptions,
+    keyboardOptions: KeyboardOptions,
     modifier: Modifier = Modifier
-    ){
+) {
 
     TextField(
         value = value,
@@ -154,13 +155,13 @@ fun RoundupTheTipRow(
     roundUp: Boolean,
     onRoundUpChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .size(48.dp),
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         Text(text = stringResource(R.string.round_up_tip))
         Switch(
             modifier = modifier
@@ -172,13 +173,14 @@ fun RoundupTheTipRow(
     }
 }
 
-private fun calculateTip(
-    amount:Double,
-    tipPercent:Double = 15.0,
+@VisibleForTesting
+internal fun calculateTip(
+    amount: Double,
+    tipPercent: Double = 15.0,
     roundUp: Boolean
-    ):String{
+): String {
     var tip = tipPercent / 100 * amount
-    if(roundUp){
+    if (roundUp) {
         tip = kotlin.math.ceil(tip)
     }
     return NumberFormat.getCurrencyInstance().format(tip)
